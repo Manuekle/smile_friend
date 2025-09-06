@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -18,28 +20,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isEditing = false;
   bool _isSaving = false;
 
-  final List<String> _availableInterests = [
-    'Meditación',
-    'Ejercicio',
-    'Lectura',
-    'Música',
-    'Arte',
-    'Naturaleza',
-    'Cocina',
-    'Videojuegos',
-    'Películas',
-    'Deportes',
-    'Fotografía',
-    'Viajes',
-    'Tecnología',
-    'Escritura',
-    'Voluntariado',
-  ];
+  // No longer a static list, will be populated from AppLocalizations
+  List<String> _availableInterests = [];
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Populate available interests once localizations are available
+    _availableInterests = _getLocalizedInterests(AppLocalizations.of(context)!);
+  }
+
+  List<String> _getLocalizedInterests(AppLocalizations l10n) {
+    return [
+      l10n.meditation,
+      l10n.exercise,
+      l10n.reading,
+      l10n.music,
+      l10n.art,
+      l10n.nature,
+      l10n.cooking,
+      l10n.videogames,
+      l10n.movies,
+      l10n.sports,
+      l10n.photography,
+      l10n.travel,
+      l10n.technology,
+      l10n.writing,
+      l10n.volunteering,
+    ];
   }
 
   Future<void> _loadUserData() async {
@@ -67,10 +81,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
+        title: Text(l10n.profile),
         actions: [
           if (_isEditing)
             TextButton(
@@ -84,9 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: AppColors.primary,
                       ),
                     )
-                  : const Text(
-                      'Guardar',
-                      style: TextStyle(
+                  : Text(
+                      l10n.save,
+                      style: const TextStyle(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -125,10 +140,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      user?.displayName ?? 'Usuario',
+                      user?.displayName ?? l10n.defaultUserName,
                       style: const TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.text,
                       ),
                     ),
@@ -152,9 +167,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Sobre mí',
-                      style: TextStyle(
+                    Text(
+                      l10n.aboutMe,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: AppColors.text,
@@ -165,15 +180,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       TextField(
                         controller: _bioController,
                         maxLines: 4,
-                        decoration: const InputDecoration(
-                          hintText: 'Cuéntanos un poco sobre ti...',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          hintText: l10n.tellUsAboutYouHint,
+                          border: const OutlineInputBorder(),
                         ),
                       )
                     else
                       Text(
                         _bioController.text.isEmpty
-                            ? 'Agrega una descripción sobre ti'
+                            ? l10n.addDescriptionHint
                             : _bioController.text,
                         style: TextStyle(
                           color: _bioController.text.isEmpty
@@ -198,9 +213,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Intereses',
-                      style: TextStyle(
+                    Text(
+                      l10n.interests,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: AppColors.text,
@@ -246,9 +261,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }).toList(),
                       )
                     else
-                      const Text(
-                        'Agrega algunos intereses para conectar con personas afines',
-                        style: TextStyle(
+                      Text(
+                        l10n.addInterestsHint,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontStyle: FontStyle.italic,
                         ),
@@ -270,39 +285,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context: context,
                       builder: (context) => AlertDialog(
                         backgroundColor: AppColors.surface,
-                        title: const Text(
-                          'Recursos de ayuda',
-                          style: TextStyle(color: AppColors.text),
+                        title: Text(
+                          l10n.helpResources,
+                          style: const TextStyle(color: AppColors.text),
                         ),
-                        content: const Column(
+                        content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Si necesitas ayuda profesional:',
-                              style: TextStyle(color: AppColors.text),
+                              l10n.professionalHelpPrompt,
+                              style: const TextStyle(color: AppColors.text),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
+                            // Hardcoded for now, but ideally also localized and managed dynamically
                             Text(
-                              '• Línea de Prevención del Suicidio: 106',
-                              style: TextStyle(color: AppColors.text),
-                            ),
-                            Text(
-                              '• Línea de la Vida: 01 8000 113 113',
-                              style: TextStyle(color: AppColors.text),
+                              '• ${l10n.suicidePreventionLine}: 106',
+                              style: const TextStyle(color: AppColors.text),
                             ),
                             Text(
-                              '• Emergencias: 123',
-                              style: TextStyle(color: AppColors.text),
+                              '• ${l10n.lifeLine}: 01 8000 113 113',
+                              style: const TextStyle(color: AppColors.text),
+                            ),
+                            Text(
+                              '• ${l10n.emergencies}: 123',
+                              style: const TextStyle(color: AppColors.text),
                             ),
                           ],
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              'Cerrar',
-                              style: TextStyle(color: AppColors.primary),
+                            child: Text(
+                              l10n.close,
+                              style: const TextStyle(color: AppColors.primary),
                             ),
                           ),
                         ],
@@ -310,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   },
                   icon: const Icon(Icons.support_agent),
-                  label: const Text('Recursos de Ayuda'),
+                  label: Text(l10n.helpResources),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: Colors.white,
@@ -326,20 +342,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context: context,
                       builder: (context) => AlertDialog(
                         backgroundColor: AppColors.surface,
-                        title: const Text(
-                          'Cerrar sesión',
-                          style: TextStyle(color: AppColors.text),
+                        title: Text(
+                          l10n.logout,
+                          style: const TextStyle(color: AppColors.text),
                         ),
-                        content: const Text(
-                          '¿Estás seguro de que quieres cerrar sesión?',
-                          style: TextStyle(color: AppColors.text),
+                        content: Text(
+                          l10n.confirmLogout,
+                          style: const TextStyle(color: AppColors.text),
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              'Cancelar',
-                              style: TextStyle(color: AppColors.textSecondary),
+                            child: Text(
+                              l10n.cancel,
+                              style: const TextStyle(color: AppColors.textSecondary),
                             ),
                           ),
                           TextButton(
@@ -347,9 +363,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.pop(context);
                               context.read<AuthService>().signOut();
                             },
-                            child: const Text(
-                              'Cerrar sesión',
-                              style: TextStyle(color: AppColors.error),
+                            child: Text(
+                              l10n.logout,
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           ),
                         ],
@@ -357,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   },
                   icon: const Icon(Icons.logout),
-                  label: const Text('Cerrar Sesión'),
+                  label: Text(l10n.logout),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: AppColors.error),
                     foregroundColor: AppColors.error,
@@ -376,9 +392,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _loadUserData(); // Recargar datos originales
                     });
                   },
-                  child: const Text(
-                    'Cancelar',
-                    style: TextStyle(color: AppColors.textSecondary),
+                  child: Text(
+                    l10n.cancel,
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ),
               ),
@@ -412,8 +428,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Perfil actualizado correctamente'),
+          SnackBar(
+            content: Text(l10n.profileUpdatedSuccess),
             backgroundColor: AppColors.success,
           ),
         );
@@ -422,8 +438,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _isSaving = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error al actualizar el perfil'),
+          SnackBar(
+            content: Text(l10n.errorUpdatingProfile),
             backgroundColor: AppColors.error,
           ),
         );

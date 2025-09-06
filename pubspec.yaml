@@ -8,6 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   
   # Firebase
   firebase_core: ^2.24.2
@@ -46,6 +48,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true # Added for internationalization
   assets:
     - .env
     - assets/images/

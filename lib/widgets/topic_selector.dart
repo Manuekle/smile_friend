@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../theme/app_theme.dart';
 
 class TopicSelector extends StatelessWidget {
   final List<String> selectedTopics;
-  final ValueChanged<List<String>> onTopicsChanged;
+  final ValueChanged<String> onTopicSelected; // Changed to single topic selection
   final List<String> availableTopics;
+  final int maxTopics;
 
   const TopicSelector({
     super.key,
     required this.selectedTopics,
-    required this.onTopicsChanged,
+    required this.onTopicSelected,
     required this.availableTopics,
+    this.maxTopics = 5,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -24,18 +30,18 @@ class TopicSelector extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Temas relacionados (opcional)',
-            style: TextStyle(
+          Text(
+            l10n.relatedTopicsOptional,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.text,
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Selecciona los temas que mejor describan tu situación',
-            style: TextStyle(
+          Text(
+            l10n.selectTopicsDescription,
+            style: const TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
             ),
@@ -50,13 +56,9 @@ class TopicSelector extends StatelessWidget {
                 label: Text(topic),
                 selected: isSelected,
                 onSelected: (selected) {
-                  final newTopics = List<String>.from(selectedTopics);
-                  if (selected) {
-                    newTopics.add(topic);
-                  } else {
-                    newTopics.remove(topic);
-                  }
-                  onTopicsChanged(newTopics);
+                  // The logic for adding/removing is now handled by the parent widget
+                  // via onTopicSelected, which also manages the maxTopics logic.
+                  onTopicSelected(topic);
                 },
                 selectedColor: AppColors.primary.withOpacity(0.3),
                 checkmarkColor: AppColors.primary,

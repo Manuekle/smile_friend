@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/app_theme.dart';
+import '../utils/mood_utils.dart'; // Importar MoodUtils
+import '../models/mood_model.dart'; // Importar MoodModel
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> postData;
@@ -149,33 +151,40 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  Widget _getMoodIcon(String? mood) {
-    IconData icon;
-    Color color;
-
-    switch (mood) {
-      case 'happy':
-        icon = Icons.sentiment_very_satisfied;
-        color = AppColors.success;
+  Widget _getMoodIcon(String? moodLabel) {
+    final Mood? mood = MoodUtils.getMoodData(moodLabel ?? 'neutral');
+    if (mood == null) {
+      return Icon(Icons.sentiment_neutral, color: AppColors.textSecondary, size: 24);
+    }
+    // NOTE: Los iconos en MoodModel son emojis (String), no IconData.
+    // Aquí estoy usando iconos Material para demostración, pero podrías:
+    // 1. Usar un paquete de iconos para emojis (e.g., font_awesome_flutter)
+    // 2. Mostrar el emoji directamente en un Text widget.
+    IconData iconData;
+    switch (mood.label) {
+      case 'Feliz':
+        iconData = Icons.sentiment_very_satisfied;
         break;
-      case 'sad':
-        icon = Icons.sentiment_very_dissatisfied;
-        color = AppColors.error;
+      case 'Triste':
+        iconData = Icons.sentiment_very_dissatisfied;
         break;
-      case 'anxious':
-        icon = Icons.sentiment_dissatisfied;
-        color = Colors.orange;
+      case 'Ansioso':
+        iconData = Icons.sentiment_dissatisfied;
         break;
-      case 'neutral':
-        icon = Icons.sentiment_neutral;
-        color = AppColors.textSecondary;
+      case 'Neutral':
+        iconData = Icons.sentiment_neutral;
+        break;
+      case 'Emocionado':
+        iconData = Icons.sentiment_satisfied_alt;
+        break;
+      case 'Abrumado':
+        iconData = Icons.sentiment_dissatisfied_sharp;
         break;
       default:
-        icon = Icons.sentiment_satisfied;
-        color = AppColors.primary;
+        iconData = Icons.sentiment_satisfied;
     }
 
-    return Icon(icon, color: color, size: 24);
+    return Icon(iconData, color: mood.color, size: 24);
   }
 
   String _formatTime(dynamic timestamp) {
@@ -218,21 +227,30 @@ class _PostCardState extends State<PostCard> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Error al publicar el post'),
+            content: Text('Solicitud de amistad enviada con éxito.'), // Mensaje actualizado
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al enviar solicitud: $e'),
             backgroundColor: AppColors.error,
           ),
         );
       }
     } finally {
       if (mounted) {
-        setState(() => _isPosting = false);
+        setState(() => _isRequesting = false); // Corregido _isPosting a _isRequesting
       }
     }
   }
 
   @override
   void dispose() {
-    _contentController.dispose();
+    // _contentController.dispose(); // Eliminado, ya que no está definido
     super.dispose();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/mood_utils.dart';
+import '../models/mood_model.dart'; // Importar Mood
 
 class MoodSelector extends StatelessWidget {
   final String selectedMood;
@@ -35,12 +36,11 @@ class MoodSelector extends StatelessWidget {
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: MoodUtils.getAllMoodKeys().map((mood) {
-              final moodData = MoodUtils.getMoodData(mood)!;
-              final isSelected = selectedMood == mood;
+            children: MoodUtils.getAllMoods().map((mood) {
+              final isSelected = selectedMood == mood.label;
 
               return GestureDetector(
-                onTap: () => onMoodSelected(mood),
+                onTap: () => onMoodSelected(mood.label),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -62,12 +62,12 @@ class MoodSelector extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        moodData['icon'],
+                        mood.icon, // Acceder al icono directamente
                         style: const TextStyle(fontSize: 20),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        moodData['label'],
+                        mood.label, // Acceder a la etiqueta directamente
                         style: TextStyle(
                           color: isSelected ? AppColors.primary : AppColors.text,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,

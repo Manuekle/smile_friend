@@ -244,4 +244,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get selectTopicsDescription =>
       'Selecciona los temas que mejor describan tu situación';
+
+  @override
+  String get home => 'Inicio';
+
+  @override
+  String get chats => 'Chats';
 }

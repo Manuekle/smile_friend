@@ -243,4 +243,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get selectTopicsDescription =>
       'Select the topics that best describe your situation';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get chats => 'Chats';
 }

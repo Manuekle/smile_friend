@@ -53,3 +53,11 @@ class UserModel {
     };
   }
 }
+
+
+
+class Timestamp {
+  toDate() {}
+  
+  static fromDate(DateTime createdAt) {}
+}

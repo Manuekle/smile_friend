@@ -18,7 +18,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _contentController = TextEditingController();
-  String _selectedMood = 'Neutral'; // Default mood
+  String _selectedMood = 'neutral'; // Default mood ID
   final List<String> _selectedTopics = [];
   bool _isPosting = false;
 
@@ -67,7 +67,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         'userName': user.displayName ?? l10n.defaultUserName,
         'userPhoto': user.photoURL,
         'content': content,
-        'mood': _selectedMood,
+        'mood': _selectedMood, // Store mood ID
         'topics': _selectedTopics,
         'createdAt': FieldValue.serverTimestamp(),
         'likes': 0,
@@ -95,9 +95,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  void _onMoodSelected(String moodLabel) {
+  void _onMoodSelected(String moodId) { // Receive mood ID
     setState(() {
-      _selectedMood = moodLabel;
+      _selectedMood = moodId;
     });
   }
 
@@ -171,7 +171,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                   const SizedBox(height: 10),
                   MoodSelector(
-                    selectedMood: _selectedMood,
+                    selectedMoodId: _selectedMood, // Pass mood ID
                     onMoodSelected: _onMoodSelected,
                   ),
                   const SizedBox(height: 20),

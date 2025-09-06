@@ -52,3 +52,9 @@ class PostModel {
     };
   }
 }
+
+class Timestamp {
+  toDate() {}
+  
+  static fromDate(DateTime createdAt) {}
+}
